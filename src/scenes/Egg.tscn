@@ -1,9 +1,18 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://scripts/Egg.gd" type="Script" id=1]
 [ext_resource path="res://assets/images/egg.png" type="Texture" id=2]
 
-[sub_resource type="CircleShape2D" id=1]
+[sub_resource type="GDScript" id=1]
+script/source = "extends RigidBody2D
+
+
+
+func _on_Egg_body_entered(body):
+	if (body.get_name() == \"Ground\"):
+		queue_free()
+"
+
+[sub_resource type="CircleShape2D" id=2]
 radius = 20.582
 
 [node name="Egg" type="RigidBody2D" groups=[
@@ -12,7 +21,7 @@ radius = 20.582
 position = Vector2( 270.672, 303.481 )
 contacts_reported = 1
 contact_monitor = true
-script = ExtResource( 1 )
+script = SubResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -22,5 +31,5 @@ texture = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( 0, 4 )
-shape = SubResource( 1 )
+shape = SubResource( 2 )
 [connection signal="body_entered" from="." to="." method="_on_Egg_body_entered"]
