@@ -1,68 +1,14 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://src/scenes/Egg.tscn" type="PackedScene" id=1]
+[ext_resource path="res://src/scenes/EggSpawner.tscn" type="PackedScene" id=1]
 [ext_resource path="res://assets/images/leaves.png" type="Texture" id=2]
-[ext_resource path="res://assets/images/basket.png" type="Texture" id=3]
+[ext_resource path="res://src/scenes/Basket.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/images/bg.png" type="Texture" id=4]
+[ext_resource path="res://src/scenes/Counter.tscn" type="PackedScene" id=5]
+[ext_resource path="res://src/scenes/Egg.tscn" type="PackedScene" id=6]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 10, 30.9963 )
-
-[sub_resource type="GDScript" id=3]
-script/source = "extends KinematicBody2D
-
-var count = 0
-
-
-
-func _ready():
-	set_process(true)
-
-
-
-func _process(delta):
-	var mouse_pos = get_viewport().get_mouse_position()
-	position.x = mouse_pos.x
-
-
-
-func _on_Area2D_body_entered(body):
-	if (body.is_in_group(\"Eggs\")):
-		body.queue_free()
-		count += 1
-		$\"../Counter\".text = String(count)
-"
-
-[sub_resource type="CircleShape2D" id=2]
-
-[sub_resource type="GDScript" id=4]
-script/source = "extends Node2D
-
-export var delay = 1
-export (PackedScene) var egg
-var timer = 0
-
-
-
-func _ready():
-	set_process(true)
-
-
-
-func _process(delta):
-	timer += delta
-	if (timer >= delay):
-		timer = 0
-		create_egg()
-
-
-
-func create_egg():
-	var e = egg.instance()
-	e.add_to_group(\"Eggs\")
-	add_child(e)
-	e.position = Vector2(rand_range(0, get_viewport().get_visible_rect().size.x), 0)
-"
 
 [node name="Main" type="Node2D"]
 
@@ -72,7 +18,7 @@ scale = Vector2( 1.2, 1.2 )
 texture = ExtResource( 4 )
 
 [node name="Leaves" type="Sprite" parent="Bg"]
-position = Vector2( -0.132957, -366.635 )
+position = Vector2( 2.95133, -368.177 )
 scale = Vector2( 0.747338, 0.766596 )
 texture = ExtResource( 2 )
 
@@ -90,42 +36,9 @@ __meta__ = {
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
 shape = SubResource( 1 )
 
-[node name="Basket" type="KinematicBody2D" parent="."]
-position = Vector2( 469.989, 699.231 )
-script = SubResource( 3 )
-__meta__ = {
-"_edit_group_": true
-}
+[node name="EggSpawner" parent="." instance=ExtResource( 1 )]
+Egg = ExtResource( 6 )
 
-[node name="Sprite" type="Sprite" parent="Basket"]
-texture = ExtResource( 3 )
+[node name="Basket" parent="." instance=ExtResource( 3 )]
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Basket"]
-polygon = PoolVector2Array( -48.6409, -22.1864, -41.879, -0.364044, -34.1951, 11.9302, -22.5156, 21.1509, -5.61092, 26.6834, 13.4452, 26.376, 28.813, 18.0774, 37.1117, 7.93459, 42.6441, -4.35969, 47.5618, -23.7232, 40.4926, -24.3379, 36.1896, -6.51118, 30.3498, 5.47574, 22.9733, 13.7744, 10.9863, 18.9994, -4.99622, 19.6142, -18.2126, 15.3112, -29.5848, 7.31988, -36.3466, -3.43761, -41.2643, -22.4937 )
-
-[node name="Area2D" type="Area2D" parent="Basket"]
-position = Vector2( 0, 8 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Basket/Area2D"]
-shape = SubResource( 2 )
-
-[node name="EggSpawner" type="Node2D" parent="."]
-script = SubResource( 4 )
-egg = ExtResource( 1 )
-
-[node name="Counter" type="Label" parent="."]
-margin_left = 300.0
-margin_top = 57.0
-margin_right = 308.0
-margin_bottom = 71.0
-grow_horizontal = 0
-rect_scale = Vector2( 5, 5 )
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "0"
-align = 2
-valign = 1
-max_lines_visible = 1
-[connection signal="body_entered" from="Basket/Area2D" to="Basket" method="_on_Area2D_body_entered"]
+[node name="Counter" parent="." instance=ExtResource( 5 )]
